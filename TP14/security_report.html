@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport de sécurité</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rapport de sécurité - Débsecan</h1>
+    <?php
+    $file_path = "/home/user/SAE61/TP14/debsecan_vul.txt";
+    if (file_exists($file_path)) {
+        $lines = file($file_path);
+        echo "<table>";
+        echo "<tr><th>CVE</th><th>Description</th></tr>";
+        foreach ($lines as $line) {
+            echo "<tr>";
+            $columns = explode(" | ", $line);
+            foreach ($columns as $column) {
+                echo "<td>$column</td>";
+            }
+            echo "</tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "<p>Aucun fichier de rapport trouvé.</p>";
+    }
+    ?>
+</body>
+</html>
+
