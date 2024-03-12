@@ -1,0 +1,83 @@
+TP 14: Introduction à la sécurisation de serveurs
+
+Questions et réponses :
+
+Q1.1 - En utilisant la commande debsecan, ol a la liste des CVE, debsecan | wc -l compte le nombre des CVE, on est à  458
+
+Q1.2 - Le codename de ma vm est bookworm en utilisant la commande "lsb_release --codename --short", puis en utilisant la commande "debsecan --suite bookworm", on obtient la liste des CVE qui est 458
+
+Q1.3 - En utilisant la commande "debsecan --suite bookworm --only-fixed | wc -l", on trouve 0 (zéro)
+
+Q1.4 - Sur debian 12, on fusant la màj, je trouve toujours 0 CVE corrigé. En utilisant la commande "debsecan --format detail | wc -l", on trouve 2698 (cherche de vulnérabilité)
+ 
+Q1.5 - le contenu de script bash :
+#!/bin/bash
+
+# Chemin vers le fichier de sortie
+OUTPUT_FILE="/home/user/SAE61/TP14/debsecan_vul.txt"
+
+# Exécuter debsecan et enregistrer la sortie dans le fichier
+/usr/sbin/debsecan --suite=bookworm --format detail > "$OUTPUT_FILE"
+
+Puis crontab :
+30 2 * * * /home/user/SAE61/TP14
+
+-------------------------------------------------------------------------
+
+Q2.6 - En utilisant la commande "sudo lynis audit system", lynis se lance
+
+Q2.7 - On a utilisé la commande "sudo apt install colorized-logs xdg-utils"
+
+Q2.8 - On utilise la commande "sudo lynis audit system | ansi2html -l > rapport-lynis.html" PUIS "xdg-open rapport-lynis.html"
+
+Q2.9 - 13 suggestions
+
+Q2.10 - Le score global est 64
+
+-------------------------------------------------------------------------
+
+Q3.1 - Apparmor est déjà installé en vérifiant la commande "aa-status"
+
+Q3.2 - On a installé les packages supp avec la commande "apt install apparmor-profiles apparmor-utils auditd"
+
+Q3.3 - Le service est active avec la commande "systemctl status apparmor"
+
+Q3.4 - En exécutant la commande "aa-unconfined", on aura les programmes qui ont des ports ouverts et ne sont pas couvert par un profil Apparmor :
+Les programmes :
+user@debian:~/SAE61/TP14$ sudo aa-unconfined
+1 /usr/lib/systemd/systemd (/sbin/init) not confined
+318 /usr/sbin/rpcbind (/sbin/rpcbind) not confined
+556 /usr/sbin/avahi-daemon not confined
+621 /usr/sbin/NetworkManager not confined
+695 /usr/sbin/cupsd confined by '/usr/sbin/cupsd (enforce)'
+706 /usr/bin/containerd not confined
+814 /usr/sbin/mariadbd not confined
+868 /usr/sbin/cups-browsed confined by '/usr/sbin/cups-browsed (enforce)'
+872 /usr/sbin/rpc.statd (/sbin/rpc.statd) not confined
+873 /usr/sbin/rpc.mountd not confined
+1242 /usr/sbin/exim4 not confined
+
+Q3.5 - On a créé un fichier nommée demoaa qui contient :
+#!/bin/bash
+echo "This is an apparmor example."
+touch sample.txt
+echo "File created"
+rm sample.txt
+echo "File deleted"
+
+Q3.6 - Puis "chmod +x demoaa"
+
+Q3.7 - On la déplacé vers le dossier /usr/local/bin*
+
+Q3.8 - On a exécuté le script depuis le répertoire personnl en tapant "demoaa". Cela fonctionne.
+
+Q3.9 - On a lancé l’observation de ce programme par Apparmor avec la commande "sudo aa-genprof /usr/local/bin/demoaa". Cela fonctionne.
+
+Q3.10 - Fait
+
+Q3.11 - On a relancé la commande "aa-unconfined", notre programme est surveillé par Apparmor
+
+Q3.12 - On a utilisé la commande "sudo aa-enforce /usr/local/bin/demoaa" pour bloquer l'éxecution de script
+
+Q3.13 - Puis en mode complain avec la commande "sudo aa-complain /usr/local/bin/demoaa"
+
