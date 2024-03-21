@@ -2,18 +2,23 @@ Vagrant.configure("2") do |config|
   config.vm.define "server" do |server|
     server.vm.box = "debian/bullseye64"
     server.vm.hostname = "server"
-    server.vm.network "private_network", ip: "192.168.50.10"
-    server.vm.provider "virtualbox" do |vb|
-      vb.memory = 4096
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--name", "server"]
+    server.vm.network "private_network", ip: "192.168.1.10"
+    server.vm.provider "libvirt" do |v|
+      v.memory = 4096
+      v.cpus = 2
     end
     server.vm.disk :disk, size: "10GB"
+
+    server.vm.synced_folder "config", "/home/vagrant"
 
     # Installation des paquets
     server.vm.provision "shell", inline: <<-SHELL
       sudo apt update
       sudo apt install -y nginx nginx-extras ufw
+
+      chmod +x config_ufw.sh
+      ./config_ufw.sh
+
     SHELL
 
   end

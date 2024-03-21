@@ -2,11 +2,10 @@ Vagrant.configure("2") do |config|
   config.vm.define "client" do |client|
     client.vm.box = "debian/bullseye64"
     client.vm.hostname = "client"
-    client.vm.network "private_network", ip: "192.168.50.11"
-    client.vm.provider "virtualbox" do |vb|
-      vb.memory = 2048
-      vb.cpus = 1
-      vb.customize ["modifyvm", :id, "--name", "client"]
+    client.vm.network "private_network", ip: "192.168.1.11"
+    client.vm.provider "libvirt" do |v|
+      v.memory = 2048
+      v.cpus = 1
     end
     client.vm.disk :disk, size: "10GB"
 
